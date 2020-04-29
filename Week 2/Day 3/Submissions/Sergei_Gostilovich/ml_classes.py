@@ -1,18 +1,28 @@
-import pandas as pd
 import numpy as np
 import dask.array as da
-import os
+
 from abc import ABC, abstractmethod
 from enum import Enum
-from glob import glob
-
 
 from sklearn.linear_model import Ridge as sk_estimator
-from sklearn.model_selection import train_test_split, GridSearchCV as sk_searchCV
 from dask_ml.linear_model import LinearRegression as dask_estimator
 
+# hard data MLNameSpace
+class MLNameSpace:
+    X_list = ['DayOfWeek','Distance', 'ArrDelay','CRSElapsedTime','Month', 'ArrTime', 'DepTime']
+    y_list = ['DepDelay']
+    data_list = X_list + y_list +['Year']
+    data_dir = 'data'
+    flight_dir = 'nycflights'
+    log_tol = 3
 
+#Enum for RegType
+class RegType(Enum):
+    NONE = 'NoneType'
+    SK = 'sk_reg'
+    DASK = 'dask_reg'
 
+# class to contain and log out necessary info
 class OutLog():
     log_Hat = 'regType, grid_time, train_time, score'
 
@@ -45,17 +55,11 @@ class OutLog():
         print(self.log_Hat)
 
 
-
-class RegType(Enum):
-    NONE = 'NoneType'
-    SK = 'sk_reg'
-    DASK = 'dask_reg'
+### Regressor class intarface
 
 class AbsRegressor(ABC):
-    # @abstractmethod
-    # def fit(self):
     pass
-
+# for Sklearn
 class AbsSkRegressor(AbsRegressor):
     type = RegType.NONE
 
@@ -68,6 +72,7 @@ class AbsSkRegressor(AbsRegressor):
         X = X_for_learn
         y = y_for_learn.iloc[:, 0]
         return X, y
+
 class SkLinRegressor(AbsSkRegressor):
 
     def __init__(self,):
@@ -75,6 +80,7 @@ class SkLinRegressor(AbsSkRegressor):
         self.estimator = sk_estimator()
     pass
 
+# for Dask
 class AbsDaskRegressor(AbsRegressor):
     type = RegType.DASK
 
@@ -94,21 +100,3 @@ class DaskLinRegressor(AbsDaskRegressor):
         super(DaskLinRegressor, self).__init__()
         self.estimator = dask_estimator()
     pass
-
-
-
-
-
-
-
-
-class MLNameSpace:
-    X_list = ['DayOfWeek','Distance', 'ArrDelay','CRSElapsedTime','Month', 'ArrTime', 'DepTime']#,'Year']
-    y_list = ['DepDelay']
-    data_dir = 'data'
-    flight_dir = 'nycflights'
-
-
-
-
-

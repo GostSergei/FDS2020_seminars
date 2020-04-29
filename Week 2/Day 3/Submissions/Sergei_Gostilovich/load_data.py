@@ -15,7 +15,7 @@ import pandas as pd
 
 
 
-#Namespace containing  dafault data
+# Namespace containing  dafault data
 class DafaultData:
     source_url = "https://storage.googleapis.com/dask-tutorial-data/nycflights.tar.gz"
     data_dir = 'data'
